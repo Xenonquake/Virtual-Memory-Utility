@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # VirtMaxU Program
 
 ## Overview
@@ -180,7 +179,7 @@ SOFTWARE.
 
 Acknowledgments
 
-    Developed with assistance from Grok 3 by xAI.
+   
     Inspired by curiosity about process memory usage on Linux systems.
     Tested on Void Linux, leveraging its lightweight environment.
->>>>>>> 97e176fa42afeec4e95580b4fdc03ebe85e9b015
+
