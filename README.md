@@ -180,6 +180,6 @@ SOFTWARE.
 Acknowledgments
 
    
-    Inspired by curiosity about process memory usage on Linux systems.
-    Tested on Void Linux, leveraging its lightweight environment.
+Inspired by curiosity about process memory usage on Linux systems.
+Tested on Void Linux, leveraging its lightweight environment.
 
