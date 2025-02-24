@@ -20,7 +20,7 @@ The VirtMaxU program is developed for educational purposes. It aims to provide a
 To compile the VirtMaxU program, use the following command:
 
 ```bash
-    gcc -std=c23 -o VirtMaxU main.c
+    gcc -std=c2x -o VirtMaxU main.c
 ```
 
 or
