@@ -73,120 +73,84 @@ If you have any questions or would like to learn more about C programming and me
 [xenonquake@gmail.com]
 
 Happy coding!
-=======
-Virtual memory utility
 
-A lightweight C program to monitor memory usage of running processes on a Unix-like system. This tool scans the /proc filesystem, collects process information (PID, name, and virtual memory size), sorts processes by memory usage, and displays the top 10 memory-intensive processes. Written as an educational exercise to explore C programming, memory management, and POSIX system interfaces.
-Overview
+## Haskell Environment Setup and Shake Build Instructions
 
-  Purpose: Educational tool to learn C programming, system-level process inspection, and memory handling.
-  Functionality:
-        Reads process data from /proc/[pid]/status.
-        Extracts PID, process name, and virtual memory size (VmSize).
-        Sorts processes in descending order by memory usage.
-        Prints the top 10 processes with the highest virtual memory usage.
-    Features:
-        Dynamic memory allocation with malloc and realloc.
-        POSIX-compliant for portability across Unix-like systems.
-        Uses C23 attributes (e.g., [[nodiscard]]) for modern C practices.
+### Setting Up Haskell Environment
 
-License
-This project is licensed under the MIT License. See the LICENSE (#license) section below for details.
-Prerequisites
+1. **Verify/Install Haskell Environment**:
+   - Ensure you have a suitable Haskell compiler (GHC >= version X.Y) and a build tool (Stack or Cabal).
+   - For Void Linux, you can install them using:
+     ```bash
+     xbps-install -S ghc cabal-install stack
+     ```
 
-  Operating System: Unix-like with /proc filesystem (e.g., Linux). Tested on Void Linux.
-  Compiler: Clang with C23 support (-std=c23).
-  Libraries: Standard C and POSIX libraries (no external dependencies beyond libc).
+2. **Integrate Shake Dependency**:
+   - Initialize a Haskell project if one doesn't exist:
+     ```bash
+     stack new <project> simple
+     ```
+     or
+     ```bash
+     cabal init
+     ```
+   - Add the `shake` library package as a dependency in the appropriate configuration file (build-depends section).
+   - Execute dependency resolution:
+     ```bash
+     stack build --dependencies-only
+     ```
+     or
+     ```bash
+     cabal build --dependencies-only
+     ```
 
-Install Clang on Void Linux if needed:
+3. **Define Build Artifact Directory Structure**:
+   - Designate a subdirectory for build outputs (e.g., `_build/`).
+   - Create this directory structure notionally or physically.
 
-    xbps-install -S clang
+### Running the Shake Build
 
-Setup
+1. **Default Build**:
+   - To build the main executable, run:
+     ```bash
+     stack exec -- runhaskell Shakefile.hs
+     ```
+     or
+     ```bash
+     runhaskell Shakefile.hs
+     ```
 
-  Clone or Copy the Code:
-    Save the code as memory_checker.c in a directory (e.g., memory-checker).
-  
-  Compile the Program:
+2. **Clean Build Directory**:
+   - To clean the build directory, run:
+     ```bash
+     stack exec -- runhaskell Shakefile.hs clean
+     ```
+     or
+     ```bash
+     runhaskell Shakefile.hs clean
+     ```
 
-    clang -std=c23 -o VirtMaxMem main.c
+3. **Build Test Executable**:
+   - To build the test executable, run:
+     ```bash
+     stack exec -- runhaskell Shakefile.hs test
+     ```
+     or
+     ```bash
+     runhaskell Shakefile.hs test
+     ```
 
-Usage
-Running the Program
+### Available Targets
 
-Execute the compiled binary:
+- **Default**: Builds the main executable.
+- **Clean**: Cleans the build directory.
+- **Test**: Builds the test executable.
 
-    ./VirtMaxMem
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-Output Example:
-```
-PID    NAME              VMSIZE (kB)
-1234   firefox          1234567
-5678   chrome           987654
-91011  plasma-desktop   456789
-1213   Xorg             234567
-1415   gnome-shell      198765
-1617   dockerd          167890
-1819   code             145678
-2021   slack            123456
-2223   mysqld           111222
-2425   zoom             98765
-```
-Lists the top 10 processes by virtual memory size (VmSize) in kilobytes.
+## Contact
+If you have any questions or would like to learn more about C programming and memory management, please feel free to reach out.
+[xenonquake@gmail.com]
 
-Notes
-
-  Requires read access to /proc (typically available to all users on Linux).
-  If fewer than 10 processes are running, it displays all available processes.
-
-Project Notes
-
-  Educational Goals:
-        
-  C Programming: Explores structs, dynamic memory (malloc, realloc), and sorting with qsort.
-  C23: Uses modern C23 features like [[nodiscard]] for better code quality.
-  OSIX: Leverages /proc filesystem and POSIX functions (opendir, readdir) for system interaction.
-  
-  Development: Written to understand process memory usage and system programming concepts in a POSIX environment.
-  
-  Limitations: 
-        Single-threaded and non-configurable (fixed top 10 output).
-        No filtering options (e.g., by process name or memory threshold).
-
-Debugging Tips
-
-  Permission Issues: If /proc/[pid]/status files are inaccessible, run with elevated privileges (sudo/doas ./memcheck), though this is rare for user-owned processes.
-    Memory Errors: Check for allocation failures in output (e.g., "Failed to allocate memory").
-    Verbose Output: Add printf statements in get_process_info to debug parsing issues.
-
-License
-This project is licensed under the MIT License.
-
-MIT License
-
-Copyright (c) 2025 River
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Acknowledgments
-
-   
-Inspired by curiosity about process memory usage on Linux systems.
-Tested on Void Linux, leveraging its lightweight environment.
-
+Happy coding!

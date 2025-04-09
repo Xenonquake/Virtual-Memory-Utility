@@ -1,0 +1,6 @@
+# Ignore Haskell build artifacts
+.stack-work/
+dist-newstyle/
+
+# Ignore C build output directory
+_build/
