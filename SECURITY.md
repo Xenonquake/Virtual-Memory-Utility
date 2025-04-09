@@ -104,3 +104,21 @@ For educational exploration:
   Add stricter /proc data validation (e.g., check file format consistency).
   Simulate buffer overflow scenarios to study mitigation (e.g., increase name size).
   Explore memory hardening (e.g., custom allocator with bounds checking).
+
+New Potential Risks Introduced by Added Features
+
+  Command-Line Argument Parsing:
+      Risk: Improper handling of command-line arguments could lead to unexpected behavior or crashes. Ensure robust parsing and validation of arguments.
+      Severity: Low (local impact).
+
+  Configurable Output Limit:
+      Risk: Allowing users to specify the number of processes to display could lead to excessive memory usage if the limit is set too high. Implement a reasonable maximum limit to prevent abuse.
+      Severity: Low (local impact).
+
+  Enhanced Input Parsing Robustness:
+      Risk: Adding checks for sscanf return values improves robustness but may introduce new failure modes if not handled correctly. Ensure thorough testing of edge cases.
+      Severity: Low (local impact).
+
+  Process Name Length Limitation:
+      Risk: Increasing the fixed buffer size for process names or implementing dynamic allocation could introduce new buffer overflow risks or memory management issues. Ensure proper bounds checking and memory handling.
+      Severity: Low (local impact).

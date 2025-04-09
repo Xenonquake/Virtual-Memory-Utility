@@ -3,6 +3,8 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/types.h>
+#include <stdbool.h>
+#include <getopt.h>
 
 // Process information structure
 typedef struct {
@@ -10,6 +12,23 @@ typedef struct {
     char name[16];
     size_t vm_size;
 } ProcessInfo;
+
+// Memory formatting function
+[[nodiscard]] static char* format_memory_size(size_t size_kb) {
+    static char buffer[32];
+    const double kb = size_kb;
+    const double mb = kb / 1024.0;
+    const double gb = mb / 1024.0;
+
+    if (gb >= 1.0) {
+        snprintf(buffer, sizeof(buffer), "%.2f GB", gb);
+    } else if (mb >= 1.0) {
+        snprintf(buffer, sizeof(buffer), "%.2f MB", mb);
+    } else {
+        snprintf(buffer, sizeof(buffer), "%.2f KB", kb);
+    }
+    return buffer;
+}
 
 // Comparison function for qsort (descending order by vm_size)
 int compare_process(const void *a, const void *b) {
@@ -21,7 +40,7 @@ int compare_process(const void *a, const void *b) {
 }
 
 // Function to read process information from /proc/[pid]/status
-[[nodiscard]] int get_process_info(const char *pid_str, ProcessInfo *proc_info) {
+[[nodiscard]] int get_process_info(const char *pid_str, ProcessInfo *proc_info, bool debug) {
     char path[256];
     snprintf(path, sizeof(path), "/proc/%s/status", pid_str);
 
@@ -37,9 +56,21 @@ int compare_process(const void *a, const void *b) {
     // Read Name and VmSize
     while (fgets(line, sizeof(line), status_file)) {
         if (strncmp(line, "Name:", 5) == 0) {
-            sscanf(line, "Name:\t%15s", proc_name);
+            if (sscanf(line, "Name:\t%15s", proc_name) != 1) {
+                if (debug) {
+                    printf("Debug: Failed to parse Name for PID=%s\n", pid_str);
+                }
+                fclose(status_file);
+                return 1;
+            }
         } else if (strncmp(line, "VmSize:", 7) == 0) {
-            sscanf(line, "VmSize:\t%zu kB", &vm_size);
+            if (sscanf(line, "VmSize:\t%zu kB", &vm_size) != 1) {
+                if (debug) {
+                    printf("Debug: Failed to parse VmSize for PID=%s\n", pid_str);
+                }
+                fclose(status_file);
+                return 1;
+            }
             break; // Stop once we have VmSize
         }
     }
@@ -58,16 +89,43 @@ int compare_process(const void *a, const void *b) {
 }
 
 // Function to print process information
-void print_process_info(const ProcessInfo *processes, size_t count) {
-    printf("PID\tNAME\t\t\tVMSIZE (kB)\n");
+void print_process_info(const ProcessInfo *processes, size_t count, size_t limit) {
+    printf("PID\tNAME\t\t\tVMSIZE\n");
     printf("-----------------------------------------\n");
-    for (size_t i = 0; i < 10 && i < count; i++) {
-        printf("%d\t%-15s\t%zu\n", processes[i].pid, processes[i].name, processes[i].vm_size);
+    for (size_t i = 0; i < limit && i < count; i++) {
+        printf("%d\t%-15s\t%s\n", processes[i].pid, processes[i].name, format_memory_size(processes[i].vm_size));
     }
 }
 
 // Main function
-int main() {
+int main(int argc, char *argv[]) {
+    bool debug = false;
+    size_t limit = 10;
+
+    int opt;
+    while ((opt = getopt(argc, argv, "n:")) != -1) {
+        switch (opt) {
+            case 'n':
+                limit = atoi(optarg);
+                break;
+            case '?':
+                if (optopt == 'n') {
+                    fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+                } else {
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                }
+                return EXIT_FAILURE;
+            default:
+                return EXIT_FAILURE;
+        }
+    }
+
+    for (int i = optind; i < argc; i++) {
+        if (strcmp(argv[i], "--debug") == 0) {
+            debug = true;
+        }
+    }
+
     // Initialize dynamic array
     size_t capacity = 100;
     size_t count = 0;
@@ -103,7 +161,7 @@ int main() {
             }
 
             // Get process information
-            if (get_process_info(entry->d_name, &processes[count]) == 0) {
+            if (get_process_info(entry->d_name, &processes[count], debug) == 0) {
                 count++;
             }
         }
@@ -113,8 +171,8 @@ int main() {
     // Sort processes by vm_size
     qsort(processes, count, sizeof(ProcessInfo), compare_process);
 
-    // Print top ten processes
-    print_process_info(processes, count);
+    // Print top processes
+    print_process_info(processes, count, limit);
 
     // Clean up
     free(processes);

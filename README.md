@@ -11,6 +11,7 @@ The VirtMaxU program is developed for educational purposes. It aims to provide a
 - Parses the process name and virtual memory size from the `/proc/[pid]/status` files.
 - Sorts processes by virtual memory usage in descending order.
 - Displays the top ten processes with the highest memory usage.
+- Supports a `--debug` flag for verbose output.
 
 ## Requirements
 - A Linux-based operating system.
@@ -20,7 +21,7 @@ The VirtMaxU program is developed for educational purposes. It aims to provide a
 To compile the VirtMaxU program, use the following command:
 
 ```bash
-    gcc -std=c2x -o VirtMaxU main.c
+    gcc -std=c23 -o VirtMaxU main.c
 ```
 
 or
@@ -37,6 +38,12 @@ Run the compiled program with the following command:
 ```
 
 The program will output the top ten processes with the highest virtual memory usage.
+
+To enable debug mode, use the `--debug` flag:
+
+```bash
+    ./VirtMaxU --debug
+```
 
 ## Code Explanation
 The main components of the VirtMaxU program include:
